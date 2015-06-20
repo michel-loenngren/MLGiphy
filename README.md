@@ -11,7 +11,7 @@ Add MLGiphy.swift to your project
 ## Usage
 ### Search
 ```
-MLGiphy.search("golden retriever") {
+MLGiphy.search("golden retriever") { (results) -> Void in
   // Do something with the returned [MLGiphy] array`
 }
 ```
