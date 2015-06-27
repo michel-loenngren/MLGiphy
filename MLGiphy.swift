@@ -34,6 +34,12 @@ class MLGiphy {
         }
     }
     
+    var fixedHeightSmall: MLGiphyImage? {
+        get {
+            return images?["fixed_height_small"]
+        }
+    }
+    
     private init(json: [String: AnyObject]) {
         type = json["type"] as! String
         id = json["id"] as! String
@@ -170,8 +176,9 @@ class MLGiphyImage {
     func animatedGif(complete: (image: UIImage?)->Void) {
         let session = NSURLSession.sharedSession()
         let dataTask = session.dataTaskWithURL(url) { (data, response, error) -> Void in
+            let sequence = data.animatedPNGSequence()
             dispatch_async(dispatch_get_main_queue()) {
-                complete(image: data.animatedPNGSequence())
+                complete(image: sequence)
             }
         }
         dataTask.resume()
@@ -180,9 +187,10 @@ class MLGiphyImage {
 
 extension NSData {
     
-    private func animatedPNGSequence() -> UIImage {
+    private func animatedPNGSequence() -> UIImage? {
         var images = [UIImage]()
         var animationDuration = 0.0
+        
         if let source = CGImageSourceCreateWithData(self, nil) where UTTypeConformsTo(CGImageSourceGetType(source), kUTTypePNG) == 0 {
             for frame in 0..<CGImageSourceGetCount(source) {
                 if let currentFrameRef = CGImageSourceCreateImageAtIndex(source, frame, nil), currentImage = UIImage(CGImage: currentFrameRef) {
@@ -191,7 +199,11 @@ extension NSData {
                 }
             }
         }
-        return UIImage.animatedImageWithImages(images, duration: NSTimeInterval(animationDuration))
+        if count(images) > 0 && animationDuration > 0 {
+            return UIImage.animatedImageWithImages(images, duration: NSTimeInterval(animationDuration))
+        } else {
+            return nil
+        }
     }
     
     private func frameTiming(properties: [String: AnyObject]?) -> Double {
