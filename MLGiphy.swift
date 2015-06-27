@@ -15,7 +15,7 @@ import MobileCoreServices
 class MLGiphy {
     
     let type: String
-    let id: String
+    let uniqueId: String
     let bitlyGifUrl: NSURL?
     let bitlyUrl: NSURL?
     let embedUrl: NSURL?
@@ -42,7 +42,7 @@ class MLGiphy {
     
     private init(json: [String: AnyObject]) {
         type = json["type"] as! String
-        id = json["id"] as! String
+        uniqueId = json["id"] as! String
         if let urlString = json["bitly_gif_url"] as? String {
             bitlyGifUrl = NSURL(string: urlString)
         } else {
