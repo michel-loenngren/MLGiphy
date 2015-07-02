@@ -102,9 +102,11 @@ class MLGiphy {
                     var jsonError: NSError?
                     if let json = NSJSONSerialization.JSONObjectWithData(data, options: .MutableLeaves, error: &jsonError) as? [String: AnyObject] {
                         if error == nil {
-                            for giphyImage in json["data"] as! [[String: AnyObject]] {
-                                let giphy = MLGiphy(json: giphyImage)
-                                results+=[giphy]
+                            if json["data"] != nil {
+                                for giphyImage in json["data"] as! [[String: AnyObject]] {
+                                    let giphy = MLGiphy(json: giphyImage)
+                                    results+=[giphy]
+                                }
                             }
                         }
                     }
